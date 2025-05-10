@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ quiz.title }} - Unacademy</title>
+    {% load static %}
+    {% load dict_key %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        body {
+            background-color: #f9f9f9;
+            font-family: 'Abolition', cursive;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 700px;
+            margin: 30px auto;
+            background: white;
+            padding: 25px 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #004080;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+        #timer {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #d9534f;
+            margin-bottom: 20px;
+            text-align: right;
+        }
+        form div {
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #e6f0ff;
+            border-radius: 6px;
+        }
+        form p {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        label {
+            cursor: pointer;
+            font-size: 1em;
+            display: block;
+            margin-bottom: 6px;
+            color: #004080;
+        }
+        input[type="radio"] {
+            margin-right: 8px;
+            cursor: pointer;
+        }
+        input.correct {
+            outline: 2px solid green;
+        }
+        input.incorrect {
+            outline: 2px solid red;
+        }
+        button {
+            background-color: #004080;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1em;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #00264d;
+        }
+        .score {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #007b00;
+            margin-bottom: 20px;
+        }
+        .back-home {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 10px 20px;
+            background-color: #004080;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+        }
+        .back-home:hover {
+            background-color: #00264d;
+        }
+    </style>
+    <script>
+        let timeLeft = 300; // 5 minutes in seconds
+        function startTimer() {
+            const timerElement = document.getElementById('timer');
+            const interval = setInterval(() => {
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                timerElement.textContent = `Time Left: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                if (timeLeft <= 0) {
+                    clearInterval(interval);
+                    alert('Time is up! The quiz will be submitted automatically.');
+                    document.getElementById('quizForm').submit();
+                }
+                timeLeft--;
+            }, 1000);
+        }
+        window.onload = startTimer;
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ quiz.title }}</h1>
+        <p>{{ quiz.description }}</p>
+        <div id="timer">Time Left: 5:00</div>
+        {% if submitted %}
+            <div class="score">Your Score: {{ score }} / {{ total_questions }}</div>
+        {% endif %}
+        <form method="post" id="quizForm">
+            {% csrf_token %}
+            {% for question in quiz.questions.all %}
+                <div>
+                    <p>{{ question.question_text }}</p>
+                    <label>
+                        <input type="radio" name="question_{{ question.id }}" value="1"
+                        {% if user_answers and user_answers|default_if_none:""|dict_key:question.id == 1 %}checked{% endif %}
+                        {% if submitted %}
+                            {% if question.correct_option == 1 %}
+                                class="correct"
+                            {% elif user_answers|default_if_none:""|dict_key:question.id == 1 %}
+                                class="incorrect"
+                            {% endif %}
+                        {% endif %}>
+                        {{ question.option1 }}
+                    </label>
+                    <label>
+                        <input type="radio" name="question_{{ question.id }}" value="2"
+                        {% if user_answers and user_answers|default_if_none:""|dict_key:question.id == 2 %}checked{% endif %}
+                        {% if submitted %}
+                            {% if question.correct_option == 2 %}
+                                class="correct"
+                            {% elif user_answers|default_if_none:""|dict_key:question.id == 2 %}
+                                class="incorrect"
+                            {% endif %}
+                        {% endif %}>
+                        {{ question.option2 }}
+                    </label>
+                    <label>
+                        <input type="radio" name="question_{{ question.id }}" value="3"
+                        {% if user_answers and user_answers|default_if_none:""|dict_key:question.id == 3 %}checked{% endif %}
+                        {% if submitted %}
+                            {% if question.correct_option == 3 %}
+                                class="correct"
+                            {% elif user_answers|default_if_none:""|dict_key:question.id == 3 %}
+                                class="incorrect"
+                            {% endif %}
+                        {% endif %}>
+                        {{ question.option3 }}
+                    </label>
+                    <label>
+                        <input type="radio" name="question_{{ question.id }}" value="4"
+                        {% if user_answers and user_answers|default_if_none:""|dict_key:question.id == 4 %}checked{% endif %}
+                        {% if submitted %}
+                            {% if question.correct_option == 4 %}
+                                class="correct"
+                            {% elif user_answers|default_if_none:""|dict_key:question.id == 4 %}
+                                class="incorrect"
+                            {% endif %}
+                        {% endif %}>
+                        {{ question.option4 }}
+                    </label>
+                </div>
+            {% endfor %}
+            <button type="submit">Submit</button>
+        </form>
+	        <a href="{% url 'accounts:home' %}" class="back-home">Back to Home</a>
+    </div>
+</body>
+</html>

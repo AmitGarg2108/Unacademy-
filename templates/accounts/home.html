@@ -1,0 +1,212 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home - Unacademy</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        #chatbox-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 30px;
+            text-align: center;
+            line-height: 60px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        #chatbox-modal {
+            display: none;
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 400px;
+            height: 400px;
+            background: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border-radius: 8px;
+            z-index: 1001;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        #chatbox-header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #chatbox-close {
+            cursor: pointer;
+            font-size: 20px;
+        }
+        #chatbox-messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            background: #f9f9f9;
+            height: 300px;
+        }
+        #chatbox-input-area {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+        }
+        #chatbox-input {
+            flex: 1;
+            padding: 8px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            outline: none;
+        }
+        #chatbox-send {
+            padding: 8px 12px;
+            margin-left: 8px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #chatbox-send:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            document.getElementById('clock').textContent = timeString;
+        }
+        setInterval(updateClock, 1000);
+        window.onload = updateClock;
+
+        function toggleChatbox() {
+            const modal = document.getElementById('chatbox-modal');
+            if (modal.style.display === 'flex') {
+                modal.style.display = 'none';
+            } else {
+                modal.style.display = 'flex';
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatbox-input');
+            const message = input.value.trim();
+            if (!message) return;
+            const messages = document.getElementById('chatbox-messages');
+            messages.innerHTML += `<div><strong>You:</strong> ${message}</div>`;
+            input.value = '';
+            messages.scrollTop = messages.scrollHeight;
+            try {
+                const response = await fetch("{% url 'accounts:ai_chat' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({message: message})
+                });
+                const data = await response.json();
+                messages.innerHTML += `<div><strong>AI:</strong> ${data.response}</div>`;
+                messages.scrollTop = messages.scrollHeight;
+            } catch (error) {
+                messages.innerHTML += `<div><strong>AI:</strong> Sorry, there was an error.</div>`;
+            }
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <span class="typewriter">Welcome to Unacademy</span>
+        {% if username %}
+        <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+            {% if profile_picture_url %}
+            <img src="{{ profile_picture_url }}" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+            {% else %}
+            <img src="{% static 'images/default-profile.png' %}" alt="Default Profile Picture" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+            {% endif %}
+            <span style="font-weight: 600; font-size: 1.1rem;">{{ username }}</span>
+        </div>
+        {% endif %}
+        <div id="clock" class="clock"></div>
+        <nav>
+            <a href="/accounts/home/">Home</a>
+            <a href="{% url 'accounts:about' %}">About</a>
+            {% if user.is_authenticated %}
+                <a href="/accounts/profile/">Profile</a>
+                <a href="/accounts/logout/">Logout</a>
+            {% else %}
+                <a href="/accounts/login/">Login</a>
+                <a href="/accounts/signup/">Sign Up</a>
+            {% endif %}
+            <a href="/quizzes/daily/">Daily Quiz</a>
+            <a href="/materials/">Study Materials</a>
+            <a href="/videos/">Video Lectures</a>
+        </nav>
+    </header>
+    <div class="container">
+        <section class="content-section">
+            <h2>Explore Quizzes by Subject and Class</h2>
+            <p>Choose your subject and class to find quizzes tailored to your learning needs. Our quizzes cover a wide range of topics and difficulty levels to help you prepare effectively.</p>
+            <ul>
+                <li><a href="/quizzes/subject/math/class/10/">Math - Class 10 Quiz</a></li>
+                <li><a href="/quizzes/subject/science/class/10/">Science - Class 10 Quiz</a></li>
+                <li><a href="/quizzes/subject/english/class/10/">English - Class 10 Quiz</a></li>
+                <li><a href="/quizzes/subject/math/class/12/">Math - Class 12 Quiz</a></li>
+                <li><a href="/quizzes/subject/science/class/12/">Science - Class 12 Quiz</a></li>
+                <li><a href="/quizzes/subject/english/class/12/">English - Class 12 Quiz</a></li>
+            </ul>
+            <h2>Latest News</h2>
+            <ul>
+                {% for news in latest_news %}
+                    <li><a href="{{ news.url }}" target="_blank" rel="noopener">{{ news.title }}</a></li>
+                {% endfor %}
+            </ul>
+            <h2>Top Scorers Reviews</h2>
+            <p>Our top scorers have shared their experiences and tips for success on Unacademy. Their dedication and hard work have helped them achieve outstanding results.</p>
+            <blockquote>
+                "Unacademy quizzes helped me identify my weak areas and improve steadily. The platform's interactive content made learning enjoyable." - Anjali, Class 12
+            </blockquote>
+            <blockquote>
+                "The daily quizzes kept me motivated and prepared for my exams. Highly recommend Unacademy to all students!" - Rohit, Class 10
+            </blockquote>
+            <blockquote>
+                "The study materials and video lectures complement the quizzes perfectly. A one-stop solution for exam preparation." - Priya, Class 12
+            </blockquote>
+            <p>
+                Unacademy is committed to providing quality education and empowering students to reach their full potential. Join our community and start your learning journey today.
+            </p>
+            <p>
+                Remember, consistent practice and a positive mindset are key to academic success. Use Unacademy to stay on track and achieve your goals.
+            </p>
+        </section>
+    </div>
+    <div id="chatbox-icon" onclick="toggleChatbox()">💬</div>
+    <div id="chatbox-modal" style="display:none; flex-direction: column;">
+        <div id="chatbox-header">
+            AI Chatbox
+            <span id="chatbox-close" onclick="toggleChatbox()">×</span>
+        </div>
+        <div id="chatbox-messages"></div>
+        <div id="chatbox-input-area">
+            <input type="text" id="chatbox-input" placeholder="Type your message here...">
+            <button id="chatbox-send" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2025 Unacademy. All rights reserved.</p>
+    </footer>
+</body>
+</html>

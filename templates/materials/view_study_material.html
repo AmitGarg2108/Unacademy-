@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ material.title }} - View PDF</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .pdf-container {
+            width: 100%;
+            height: 90vh;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ material.title }}</h1>
+    <p>
+        {% if material.class_name %}Class: {{ material.class_name }}{% endif %}
+        {% if material.entrance_exam %} | Exam: {{ material.entrance_exam }}{% endif %}
+    </p>
+    <div class="pdf-container">
+        <iframe src="{{ material.file.url }}" width="100%" height="100%" style="border:none;"></iframe>
+    </div>
+    <p><a href="{% url 'study_materials' %}">Back to Study Materials</a></p>
+</body>
+</html>

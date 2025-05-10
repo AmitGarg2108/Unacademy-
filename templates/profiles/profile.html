@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile - Unacademy</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f8;
+            margin: 0;
+            padding: 20px;
+        }
+        .profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .profile-header img {
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            margin-right: 30px;
+            border: 3px solid #007bff;
+        }
+        .profile-info h1 {
+            margin: 0;
+            font-size: 2.5em;
+            color: #333;
+        }
+        .profile-info p {
+            margin: 5px 0;
+            font-size: 1.1em;
+            color: #666;
+        }
+        h2 {
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 8px;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1em;
+        }
+        table thead {
+            background-color: #007bff;
+            color: white;
+        }
+        table th, table td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        table tbody tr:hover {
+            background-color: #e9f5ff;
+        }
+        .no-scores {
+            font-style: italic;
+            color: #999;
+        }
+        .back-home, .edit-profile {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+        .back-home {
+            background-color: #004080;
+        }
+        .back-home:hover {
+            background-color: #00264d;
+        }
+        .edit-profile {
+            background-color: #007bff;
+            margin-right: 10px;
+        }
+        .edit-profile:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <div class="profile-header">
+            {% if profile.profile_picture %}
+                <img src="{{ profile.profile_picture.url }}" alt="Profile Picture">
+            {% else %}
+                <img src="{% static 'images/default-profile.png' %}" alt="Default Profile Picture">
+            {% endif %}
+            <div class="profile-info">
+                <h1>{{ profile.user.username }}</h1>
+                <p><strong>Class:</strong> {{ profile.class_name }}</p>
+                <p><strong>Entrance Exam:</strong> {{ profile.entrance_exam }}</p>
+            </div>
+        </div>
+
+        <h2>Previous Quiz Scores</h2>
+        {% if previous_scores %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Quiz Title</th>
+                        <th>Score</th>
+                        <th>Date Taken</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for score in previous_scores %}
+                    <tr>
+                        <td>{{ score.quiz.title }}</td>
+                        <td>{{ score.score }}</td>
+                        <td>{{ score.date_taken|date:"Y-m-d H:i" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="no-scores">No previous quiz scores found.</p>
+        {% endif %}
+    </div>
+    <a href="{% url 'edit_profile' %}" class="edit-profile">Edit Profile</a>
+	    <a href="{% url 'accounts:home' %}" class="back-home">Back to Home</a>
+</body>
+</html>

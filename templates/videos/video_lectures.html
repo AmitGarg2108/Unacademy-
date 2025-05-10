@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Video Lectures - Unacademy</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .video-categories, .popular-exams {
+            margin-bottom: 30px;
+            background: #e6f0ff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        .video-categories h2, .popular-exams h2 {
+            margin-top: 0;
+        }
+        .video-categories ul, .popular-exams ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .video-categories li, .popular-exams li {
+            margin-bottom: 8px;
+        }
+        .video-categories a, .popular-exams a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .video-categories a:hover, .popular-exams a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Video Lectures</h1>
+
+    <div class="video-categories">
+        <h2>Video Lecture Categories</h2>
+        <ul>
+            <li><a href="#">Class 10 Videos</a></li>
+            <li><a href="#">Class 12 Videos</a></li>
+            <li><a href="#">Science Videos</a></li>
+            <li><a href="#">Math Videos</a></li>
+            <li><a href="#">English Videos</a></li>
+        </ul>
+    </div>
+
+    <div class="popular-exams">
+        <h2>Popular Exams</h2>
+        <ul>
+            <li><a href="#">JEE Preparation Videos</a></li>
+            <li><a href="#">NEET Preparation Videos</a></li>
+            <li><a href="#">CBSE Board Videos</a></li>
+            <li><a href="#">ICSE Board Videos</a></li>
+        </ul>
+    </div>
+
+    {% if videos %}
+        <ul>
+            {% for video in videos %}
+                <li>
+                    <h3>{{ video.title }}</h3>
+                    <p>{{ video.description }}</p>
+                    <video width="640" height="360" controls>
+                        <source src="{{ video.video_file.url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No video lectures available at the moment.</p>
+    {% endif %}
+    <p><a href="{% url 'accounts:home' %}">Back to Home</a></p>
+</body>
+</html>

@@ -1,0 +1,132 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Unacademy</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <header style="top: 0px;"><span class="unacademy-animate"><h1>UNACADEMY</h1></span></header>
+    <style>
+        body {
+            font-family: 'Abolition', sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 350px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        input[type="text"], input[type="password"] {
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        input[type="text"]:focus, input[type="password"]:focus {
+            border-color: #007bff;
+        }
+        button, .google-login-btn {
+            padding: 0.75rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: none;
+            margin-bottom: 1rem;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .google-login-btn {
+            background-color: #db4437;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            cursor: pointer;
+        }
+        .google-login-btn:hover {
+            background-color: #a3362a;
+            transform: scale(1.05);
+        }
+        .errorlist {
+            color: red;
+            margin-bottom: 1rem;
+            list-style: none;
+            padding-left: 0;
+            text-align: left;
+        }
+        .home-link {
+            display: block;
+            margin-top: 1rem;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease, transform 0.3s ease;
+            cursor: pointer;
+        }
+        .home-link:hover {
+            color: #0056b3;
+            text-decoration: underline;
+            transform: scale(1.05);
+        }
+    </style>
+    <script>
+        window.onload = function() {
+            var usernameInput = document.getElementById('id_username');
+            var passwordInput = document.getElementById('id_password');
+            if (usernameInput) {
+                usernameInput.value = '';
+                usernameInput.autocomplete = 'off';
+                usernameInput.setAttribute('autocomplete', 'off');
+            }
+            if (passwordInput) {
+                passwordInput.value = '';
+                passwordInput.autocomplete = 'off';
+                passwordInput.setAttribute('autocomplete', 'off');
+            }
+        };
+    </script>
+</head>
+<body>
+
+    <div class="login-container">
+        <h2>Login</h2>
+        <form method="post" novalidate autocomplete="off">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <input type="text" name="{{ form.username.html_name }}" placeholder="Username" autocomplete="off" required id="id_username" value="">
+            {{ form.username.errors }}
+            <input type="password" name="{{ form.password.html_name }}" placeholder="Password" autocomplete="off" required id="id_password" value="">
+            {{ form.password.errors }}
+            <button type="submit">Login</button>
+        </form>
+        <a href="{% url 'social:begin' 'google-oauth2' %}" class="google-login-btn">Login with Google</a>
+        <a href="{% url 'accounts:home' %}" class="home-link">Back to Home</a>
+        <a href="{% url 'accounts:signup' %}" class="home-link">Sign Up</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,135 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up - Unacademy</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <header style="top: 0px;"><span class="unacademy-animate"><h1>UNACADEMY</h1></span></header>
+    <style>
+        body {
+            font-family: 'Abolition', sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .signup-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 350px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        input[type="text"], input[type="password"] {
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        input[type="text"]:focus, input[type="password"]:focus {
+            border-color: #007bff;
+        }
+        button {
+            padding: 0.75rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: none;
+            margin-bottom: 1rem;
+            background-color: #007bff;
+            color: white;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .errorlist {
+            color: red;
+            margin-bottom: 1rem;
+            list-style: none;
+            padding-left: 0;
+            text-align: left;
+        }
+        .home-link {
+            display: block;
+            margin-top: 1rem;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease, transform 0.3s ease;
+            cursor: pointer;
+        }
+        .home-link:hover {
+            color: #0056b3;
+            text-decoration: underline;
+            transform: scale(1.05);
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease, transform 0.3s ease;
+            cursor: pointer;
+        }
+        a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+            transform: scale(1.05);
+        }
+    </style>
+    <script>
+        window.onload = function() {
+            var usernameInput = document.getElementById('id_username');
+            var password1Input = document.getElementById('id_password1');
+            var password2Input = document.getElementById('id_password2');
+            if (usernameInput) {
+                usernameInput.value = '';
+                usernameInput.autocomplete = 'off';
+                usernameInput.setAttribute('autocomplete', 'off');
+            }
+            if (password1Input) {
+                password1Input.value = '';
+                password1Input.autocomplete = 'off';
+                password1Input.setAttribute('autocomplete', 'off');
+            }
+            if (password2Input) {
+                password2Input.value = '';
+                password2Input.autocomplete = 'off';
+                password2Input.setAttribute('autocomplete', 'off');
+            }
+        };
+    </script>
+</head>
+<body>
+
+    <div class="signup-container">
+        <h2>Sign Up</h2>
+        <form method="post" novalidate autocomplete="off">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <input type="text" name="{{ form.username.html_name }}" placeholder="Username" autocomplete="off" required id="id_username" value="{{ form.username.value|default_if_none:'' }}">
+            {{ form.username.errors }}
+            <input type="password" name="{{ form.password1.html_name }}" placeholder="Password" autocomplete="off" required id="id_password1" value="">
+            {{ form.password1.errors }}
+            <input type="password" name="{{ form.password2.html_name }}" placeholder="Confirm Password" autocomplete="off" required id="id_password2" value="">
+            {{ form.password2.errors }}
+            <button type="submit">Sign Up</button>
+        </form>
+        <a href="{% url 'home' %}" class="home-link">Back to Home</a>
+    </div>
+</body>
+</html>
